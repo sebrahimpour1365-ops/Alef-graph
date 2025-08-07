@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>Alef Graph</title>
+  <style>
+    body { font-family: sans-serif; background: #f2f2f2; padding: 20px; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; background: #fff; }
+    #message { width: 80%; }
+  </style>
+</head>
+<body>
+  <h2>Alef Graph</h2>
+  <input id="username" placeholder="نام کاربری" />
+  <button onclick="setUsername()">ورود</button>
+  <div id="chat"></div>
+  <input id="message" placeholder="پیام..." />
+  <button onclick="sendMessage()">ارسال</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let username = "ناشناس";
+
+    function setUsername() {
+      username = document.getElementById("username").value || "ناشناس";
+      socket.emit("setUsername", username);
+    }
+
+    function sendMessage() {
+      const msg = document.getElementById("message").value;
+      socket.emit("chatMessage", msg);
+      document.getElementById("message").value = "";
+    }
+
+    socket.on("chatMessage", (data) => {
+      const chat = document.getElementById("chat");
+      chat.innerHTML += `<p><strong>${data.user}:</strong> ${data.text}</p>`;
+      chat.scrollTop = chat.scrollHeight;
+    });
+  </script>
+</body>
+</html>
